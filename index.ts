@@ -24,5 +24,10 @@ export { getLocation }
 
 export function jsonpos( json: string, options: LocationOptions ): Location
 {
-	return getLocation( getAstByString( json ), options );
+	return getLocation(
+		typeof json === 'string'
+			? getAstByString( json )
+			: getAstByObject( json ),
+		options
+	);
 }
