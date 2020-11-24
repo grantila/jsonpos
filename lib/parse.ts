@@ -5,7 +5,7 @@ export interface ParsedJson
 {
 	json: any;
 	jsonString: string;
-	jsonAST: parse.ValueNode;
+	jsonAST: unknown;
 }
 
 export function getAstByString( jsonString: string, json?: any ): ParsedJson

@@ -1,5 +1,5 @@
-import { ValueNode, IdentifierNode } from 'json-to-ast'
-import { ParsedJson } from './parse'
+import type { ValueNode, IdentifierNode } from 'json-to-ast'
+import type { ParsedJson } from './parse'
 
 
 export type LocationPath = Array< number | string >;
@@ -92,7 +92,7 @@ export function getLocation(
 					return node.children[ Number( pathItem ) ];
 				} )( )
 			: node
-		, jsonAST
+		, jsonAST as ValueNode
 	);
 
 	return { start: loc?.start, end: loc?.end };
