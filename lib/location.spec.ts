@@ -32,6 +32,28 @@ describe( "location", ( ) =>
 		} );
 	} );
 
+	it( "by string, markIdentifier {= false by default}", ( ) =>
+	{
+		const parsed = getAstByString( json );
+
+		const loc = getLocation(
+			parsed,
+			{ dataPath: "foo.1.baz" }
+		);
+		expect( loc ).toStrictEqual( {
+			start: {
+				line: 4,
+				column: 12,
+				offset: 32,
+			},
+			end: {
+				line: 4,
+				column: 17,
+				offset: 37,
+			},
+		} );
+	} );
+
 	it( "by string, markIdentifier = true", ( ) =>
 	{
 		const parsed = getAstByString( json );
@@ -39,6 +61,28 @@ describe( "location", ( ) =>
 		const loc = getLocation(
 			parsed,
 			{ dataPath: "foo.1.baz", markIdentifier: true }
+		);
+		expect( loc ).toStrictEqual( {
+			start: {
+				line: 4,
+				column: 5,
+				offset: 25,
+			},
+			end: {
+				line: 4,
+				column: 10,
+				offset: 30,
+			},
+		} );
+	} );
+
+	it( "by string beginning with '.', markIdentifier = true", ( ) =>
+	{
+		const parsed = getAstByString( json );
+
+		const loc = getLocation(
+			parsed,
+			{ dataPath: ".foo.1.baz", markIdentifier: true }
 		);
 		expect( loc ).toStrictEqual( {
 			start: {
