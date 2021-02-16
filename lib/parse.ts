@@ -18,8 +18,8 @@ export function getAstByString( jsonString: string, json?: any ): ParsedJson
 	};
 }
 
-export function getAstByObject( json: any ): ParsedJson
+export function getAstByObject( json: any, indent = 4 ): ParsedJson
 {
-	const jsonString = JSON.stringify( json, null, 4 );
+	const jsonString = JSON.stringify( json, null, indent );
 	return getAstByString( jsonString );
 }

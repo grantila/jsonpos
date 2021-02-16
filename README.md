@@ -130,6 +130,12 @@ const ast = getAstByObject( { foo: "bar" } );
 const { json, jsonString, jsonAST } = ast;
 ```
 
+`getAstByObject` takes an optional second argument `indent` which can be set to something else than `4` if necessary, e.g. `2`:
+
+```ts
+const ast = getAstByObject( { foo: "bar" }, 2 );
+```
+
 ### getLocation
 
 The `getLocation` takes an *ast* object as returned by `getAstByString` or `getAstByObject` and returns a `Location` object.

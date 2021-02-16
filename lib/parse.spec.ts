@@ -27,4 +27,14 @@ describe( "parse", ( ) =>
 			getAstByString( str )
 		);
 	} );
+
+	it( "getAstByObject with custom indent", ( ) =>
+	{
+		const str = '{\n  "foo": {\n    "bar": "baz"\n  }\n}';
+		expect(
+			getAstByObject( { foo: { bar: "baz" } }, 2 )
+		).toStrictEqual(
+			getAstByString( str )
+		);
+	} );
 } );
