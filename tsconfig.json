@@ -3,14 +3,14 @@
 		"allowJs": false,
 		"declaration": true,
 		"sourceMap": true,
-		"lib": [ "es2015", "es2017" ],
+		"lib": [ "ES2019" ],
 		"types": [
 			"node",
 			"jest"
 		],
 		"noEmit": true,
-		"target": "ES6",
-		"module": "CommonJS",
+		"target": "ES2019",
+		"module": "ES2020",
 		"moduleResolution": "node",
 		"noImplicitAny": true,
 		"noUnusedLocals": true,
@@ -19,7 +19,6 @@
 		"alwaysStrict": true,
 	},
 	"include": [
-		"lib",
-		"index.ts"
+		"lib"
 	]
 }

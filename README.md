@@ -36,6 +36,10 @@ If the *property* "bar" is wanted, instead of the *value*, set `markIdentifier` 
 
 `npm i jsonpos` or `yarn add jsonpos`
 
+## Versions
+
+ * Since v2 this is a [pure ESM][pure-esm] package, and requires Node.js >=12.20
+
 
 # Simple usage
 
@@ -162,3 +166,4 @@ const loc = getLocation( ast, { dataPath: 'foo' } );
 [coverage-url]: https://coveralls.io/github/grantila/jsonpos?branch=master
 [lgtm-image]: https://img.shields.io/lgtm/grade/javascript/g/grantila/jsonpos.svg?logo=lgtm&logoWidth=18
 [lgtm-url]: https://lgtm.com/projects/g/grantila/jsonpos/context:javascript
+[pure-esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c

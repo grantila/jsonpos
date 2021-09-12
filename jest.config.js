@@ -1,9 +1,9 @@
-module.exports = {
+export default {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
-	testMatch: [ '<rootDir>/lib/**/*.spec.ts' ],
+	testMatch: [ '<rootDir>/lib/**/*.test.ts' ],
 	collectCoverageFrom: [ '<rootDir>/lib/**' ],
 	collectCoverage: true,
 	coveragePathIgnorePatterns: [ '/node_modules/' ],
 	coverageReporters: [ 'lcov', 'text', 'html' ],
-};
+}

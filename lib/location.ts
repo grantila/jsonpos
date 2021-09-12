@@ -67,6 +67,7 @@ export function getLocation(
 						? key
 						: value;
 				} )( )
+			// istanbul ignore next
 			: node.type === 'Array'
 			? ( ( ) =>
 				{
@@ -95,5 +96,6 @@ export function getLocation(
 		, jsonAST as ValueNode
 	);
 
+	// istanbul ignore next
 	return { start: loc?.start, end: loc?.end };
 }

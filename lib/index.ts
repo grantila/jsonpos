@@ -1,13 +1,13 @@
-import type { ParsedJson } from './lib/parse'
-import { getAstByObject, getAstByString } from './lib/parse'
+import type { ParsedJson } from './parse'
+import { getAstByObject, getAstByString } from './parse'
 
 import type {
 	Position,
 	LocationPath,
 	Location,
 	LocationOptions,
-} from './lib/location'
-import { getLocation } from './lib/location'
+} from './location'
+import { getLocation } from './location'
 
 
 export type { ParsedJson }
