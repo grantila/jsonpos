@@ -1,4 +1,4 @@
-import * as parse from 'json-to-ast'
+import parse from 'json-to-ast'
 
 
 export interface ParsedJson

@@ -11,6 +11,7 @@
 		"noEmit": true,
 		"target": "ES2019",
 		"module": "ES2020",
+		"esModuleInterop": true,
 		"moduleResolution": "node",
 		"noImplicitAny": true,
 		"noUnusedLocals": true,
