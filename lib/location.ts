@@ -1,5 +1,6 @@
 import type { ValueNode, IdentifierNode } from 'json-to-ast'
-import type { ParsedJson } from './parse'
+
+import type { ParsedJson } from './parse.js'
 
 
 export type LocationPath = Array< number | string >;

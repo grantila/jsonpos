@@ -1,13 +1,13 @@
-import type { ParsedJson } from './parse'
-import { getAstByObject, getAstByString } from './parse'
+import type { ParsedJson } from './parse.js'
+import { getAstByObject, getAstByString } from './parse.js'
 
 import type {
 	Position,
 	LocationPath,
 	Location,
 	LocationOptions,
-} from './location'
-import { getLocation } from './location'
+} from './location.js'
+import { getLocation } from './location.js'
 
 
 export type { ParsedJson }
