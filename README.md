@@ -20,7 +20,7 @@ Given the following JSON:
 }
 ```
 
-The position of `foo.bar` (or `["foo", "bar"]` if provided as an array), is:
+The position of `/foo/bar` (or `["foo", "bar"]` if provided as an array), is:
 ```js
 {
     start: { line: 3, column: 16, offset: 30 },
@@ -39,7 +39,12 @@ If the *property* "bar" is wanted, instead of the *value*, set `markIdentifier` 
 ## Versions
 
  * Since v2 this is a [pure ESM][pure-esm] package, and requires Node.js >=12.20
-
+ * Since v3 the API has changed. The `dataPath` option has been renamed with changed semantics.
+   * Dot-based (string) `dataPath` is now `dotPath`. **It's not recommended to use as it's not safe for certain characters**.
+     * Also, it now requires an initial `.`. Only the path `.` represents the root object.
+   * Array-based `dataPath` is now simply `path`.
+     * An empty object represents the root object, like in v2.
+   * New slash-based (string) `pointerPath` is allowed, following JSON Pointer encoding.
 
 # Simple usage
 
@@ -51,8 +56,12 @@ where `LocationOptions` is:
 
 ```ts
 interface LocationOptions
-    dataPath: string | Array< string | number >;
     markIdentifier?: boolean;
+
+    // Only one of the following
+    dotPath: string;
+    path: Array< string | number >;
+    pointerPath: string;
 }
 ```
 
@@ -76,16 +85,31 @@ interface Position
 }
 ```
 
-### As textual path:
+### As dot-separated textual path:
 
 ```ts
 import { jsonpos } from 'jsonpos'
 
 const loc = jsonpos(
     '{ "foo": { "bar": "baz" } }',
-    { dataPath: 'foo.bar' }
+    { dotPath: 'foo.bar' }
 );
 ```
+
+*Note that this method is strongly advised against.*
+
+
+### As /-separated textual path:
+
+```ts
+import { jsonpos } from 'jsonpos'
+
+const loc = jsonpos(
+    '{ "foo": { "bar": "baz" } }',
+    { pointerPath: 'foo/bar' }
+);
+```
+
 
 ### As array path:
 
@@ -94,7 +118,7 @@ import { jsonpos } from 'jsonpos'
 
 const loc = jsonpos(
     '{ "foo": { "bar": "baz" } }',
-    { dataPath: [ 'foo', 'bar' ] }
+    { path: [ 'foo', 'bar' ] }
 );
 ```
 
@@ -154,7 +178,7 @@ The `getLocation` takes an *ast* object as returned by `getAstByString` or `getA
 import { getAstByString, getLocation } from 'jsonpos'
 
 const ast = getAstByString( '{ "foo": "bar" }' );
-const loc = getLocation( ast, { dataPath: 'foo' } );
+const loc = getLocation( ast, { pointerPath: '/foo' } );
 ```
 
 [npm-image]: https://img.shields.io/npm/v/jsonpos.svg

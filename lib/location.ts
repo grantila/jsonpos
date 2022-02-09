@@ -1,14 +1,14 @@
 import type { ValueNode, IdentifierNode } from 'json-to-ast'
 
 import type { ParsedJson } from './parse.js'
+import { LocationOptionsPath, parsePath } from './path.js'
 
 
-export type LocationPath = Array< number | string >;
-
-export interface LocationOptions {
-	dataPath: string | LocationPath;
-	markIdentifier?: boolean;
-}
+export type LocationOptions =
+	& LocationOptionsPath
+	& {
+		markIdentifier?: boolean;
+	};
 
 export interface Position
 {
@@ -25,22 +25,13 @@ export interface Location
 
 export function getLocation(
 	parsedJson: ParsedJson,
-	{ dataPath, markIdentifier = false }: LocationOptions
+	options: LocationOptions
 ): Location
 {
 	const { jsonAST } = parsedJson;
+	const { markIdentifier = false } = options;
 
-	const path =
-		Array.isArray( dataPath )
-		? dataPath
-		:
-			(
-				dataPath.startsWith( '.' )
-				? dataPath.slice( 1 )
-				: dataPath
-			)
-			.split( '.' )
-			.filter( val => val );
+	const path = parsePath( options );
 
 	const pathAsString = ( ) => path.join( '.' );
 	const getParentPath = ( index: number ) =>
