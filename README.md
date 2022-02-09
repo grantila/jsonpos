@@ -92,11 +92,11 @@ import { jsonpos } from 'jsonpos'
 
 const loc = jsonpos(
     '{ "foo": { "bar": "baz" } }',
-    { dotPath: 'foo.bar' }
+    { dotPath: '.foo.bar' }
 );
 ```
 
-*Note that this method is strongly advised against.*
+*Note that dot-separated paths are strongly advised against.*
 
 
 ### As /-separated textual path:
@@ -106,7 +106,7 @@ import { jsonpos } from 'jsonpos'
 
 const loc = jsonpos(
     '{ "foo": { "bar": "baz" } }',
-    { pointerPath: 'foo/bar' }
+    { pointerPath: '/foo/bar' }
 );
 ```
 
