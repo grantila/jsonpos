@@ -207,7 +207,6 @@ describe( "location", ( ) =>
 			const obj = { "foo": { "a\"b'c/d~e[f]g": { "": "bar" } } };
 
 			const parsed = getAstByObject( obj );
-			console.log(parsed.jsonString);
 
 			const loc = getLocation( parsed, { pointerPath } );
 

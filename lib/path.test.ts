@@ -70,6 +70,14 @@ describe( "path", ( ) =>
 			expect( ( ) => parsePath( { dotPath } ) ).toThrow( );
 		} );
 
+		it( "begin closing bracket", ( ) =>
+		{
+			const dotPath = "['foo']['baz'].bar";
+
+			expect( parsePath( { dotPath } ) )
+				.toStrictEqual( [ "foo", "baz", "bar" ] );
+		} );
+
 		it( "complex with all", ( ) =>
 		{
 			const dotPath = ".foo['baz']['bak']..bam.'bar'['bob'].bee";

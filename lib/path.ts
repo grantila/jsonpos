@@ -46,9 +46,10 @@ export function parsePath( path: LocationOptionsPath ): LocationPath
 
 function parseDotPath( path: string ): LocationPath
 {
-	if ( !path.startsWith( '.' ) )
+	if ( !path.startsWith( '.' ) && !path.startsWith( '[' ) )
 		throw new SyntaxError(
-			`parsePath(): Invalid dot-path, must begin with ".": ${path}`
+			'parsePath(): Invalid dot-path, must begin with "." or "[": ' +
+			`${path}`
 		);
 
 	const bail = ( ): never =>
