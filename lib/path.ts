@@ -94,17 +94,29 @@ function parseDotPath( path: string ): LocationPath
 				pos = lastPos;
 			}
 		}
-		else // ['segment name'] form
+		else // ['segment name'] or [number] form
 		{
-			if ( path.charAt( pos + 1 ) !== "'" )
-				bail( );
+			if ( path.charAt( pos + 1 ).match( /[0-9]/ ) )
+			{
+				const lastPos = path.indexOf( "]", pos + 1 );
+				if ( lastPos === -1 )
+					bail( );
 
-			const lastPos = path.indexOf( "']", pos + 2 );
-			if ( lastPos === -1 )
-				bail( );
+				ret.push( path.slice( pos + 1, lastPos ) );
+				pos = lastPos + 1;
+			}
+			else
+			{
+				if ( path.charAt( pos + 1 ) !== "'" )
+					bail( );
 
-			ret.push( path.slice( pos + 2, lastPos ) );
-			pos = lastPos + 2;
+				const lastPos = path.indexOf( "']", pos + 2 );
+				if ( lastPos === -1 )
+					bail( );
+
+				ret.push( path.slice( pos + 2, lastPos ) );
+				pos = lastPos + 2;
+			}
 		}
 	}
 

@@ -86,6 +86,21 @@ describe( "path", ( ) =>
 
 			expect( parsePath( { dotPath } ) ).toStrictEqual( arr );
 		} );
+
+		it( "bracket with number", ( ) =>
+		{
+			const dotPath = ".foo['baz'][2].bee";
+
+			expect( parsePath( { dotPath } ) )
+				.toStrictEqual( [ "foo", "baz", "2", "bee" ] );
+		} );
+
+		it( "bracket with number, invalid", ( ) =>
+		{
+			const dotPath = ".foo['baz'][2";
+
+			expect( ( ) => parsePath( { dotPath } ) ).toThrow( );
+		} );
 	} );
 
 	describe( "json-pointer form", ( ) =>
