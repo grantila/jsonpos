@@ -123,7 +123,7 @@ function parseDotPath( path: string ): LocationPath
 	return ret;
 }
 
-function parseJsonPointerPath( path: string ): LocationPath
+export function parseJsonPointerPath( path: string ): Array< string >
 {
 	if ( !path.startsWith( '/' ) )
 		throw new SyntaxError(
@@ -136,7 +136,19 @@ function parseJsonPointerPath( path: string ): LocationPath
 		.map( segment => parseJsonPointerSegment( segment ) );
 }
 
-function parseJsonPointerSegment( segment: string ): string
+export function parseJsonPointerSegment( segment: string ): string
 {
 	return segment.replace( /~1/g, '/' ).replace( /~0/g, '~' );
+}
+
+export function encodeJsonPointerPath( path: Array< string | number > ): string
+{
+	return '/' + path
+		.map( segment => encodeJsonPointerSegment( segment ) )
+		.join( '/' );
+}
+
+export function encodeJsonPointerSegment( segment: string | number ): string
+{
+	return `${segment}`.replace( /~/g, '~0' ).replace( /\//g, '~1' );
 }

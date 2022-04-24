@@ -34,3 +34,10 @@ export function jsonpos( json: string, options: LocationOptions ): Location
 		options
 	);
 }
+
+export {
+	parseJsonPointerPath,
+	parseJsonPointerSegment,
+	encodeJsonPointerPath,
+	encodeJsonPointerSegment,
+} from './path.js'

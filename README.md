@@ -46,6 +46,23 @@ If the *property* "bar" is wanted, instead of the *value*, set `markIdentifier` 
      * An empty object represents the root object, like in v2.
    * New slash-based (string) `pointerPath` is allowed, following JSON Pointer encoding.
 
+# Exports
+
+The package exports the following functions:
+ * [`jsonpos`](#definition) the main function, getting the location of a value in a JSON document
+ * AST helper functions:
+   * [`getAstByObject`](#getastbyobject)
+   * [`getAstByString`](#getastbystring)
+ * Location helper function:
+   * [`getLocation`](#getlocation)
+ * Path helper functions:
+   * [`parsePath`](#parsepath)
+   * [`encodeJsonPointerPath`](#json-pointer-paths)
+   * [`encodeJsonPointerSegment`](#json-pointer-paths)
+   * [`parseJsonPointerPath`](#json-pointer-paths)
+   * [`parseJsonPointerSegment`](#json-pointer-paths)
+
+
 # Simple usage
 
 ### Definition
@@ -180,6 +197,37 @@ import { getAstByString, getLocation } from 'jsonpos'
 const ast = getAstByString( '{ "foo": "bar" }' );
 const loc = getLocation( ast, { pointerPath: '/foo' } );
 ```
+
+## Path helpers
+
+This package understand array paths `["foo", "bar"]`, dot-path `".foo.bar"` and JSON Pointer paths `/foo/bar`. Support for dot-path is to understand older paths from [Ajv](https://www.npmjs.com/package/ajv). Array paths are often the most practical programatically.
+
+### parsePath
+
+The `parsePath` function is what [`jsonpos`]() uses to parse the path. It takes on object containing either `path` (an array), `dotPath` or `pointerPath` (strings), and it returns the path as an array.
+
+```ts
+parsePath( { path: [ "foo", "bar" ] } );  // -> [ "foo", "bar" ]
+parsePath( { dotPath: ".foo.bar" } );     // -> [ "foo", "bar" ]
+parsePath( { pointerPath: "/foo/bar" } ); // -> [ "foo", "bar" ]
+```
+
+### JSON Pointer paths
+
+JSON Pointer paths support the slash character (`/`) in a path segment, and encodes it with `~1` and `~0`. `encodeJsonPointerSegment` and `parseJsonPointerSegment` does this:
+
+```ts
+encodeJsonPointerSegment( "f/o/o" ); // -> "f~1o~1o"
+parseJsonPointerSegment( "f~1o~1o" ); // -> "f/o/o"
+```
+
+For complete paths (of segments), use `encodeJsonPointerPath` and `parseJsonPointerPath`:
+
+```ts
+encodeJsonPointerPath( [ "f/o/o", "bar" ] ); // -> "/f~1o~1o/bar"
+parseJsonPointerPath( "/f~1o~1o/bar" ); // -> [ "f/o/o", "bar" ]
+```
+
 
 [npm-image]: https://img.shields.io/npm/v/jsonpos.svg
 [npm-url]: https://npmjs.org/package/jsonpos

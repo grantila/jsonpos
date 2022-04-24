@@ -1,4 +1,8 @@
-import { parsePath } from "./path.js"
+import {
+	parsePath,
+	encodeJsonPointerPath,
+	encodeJsonPointerSegment,
+} from "./path.js"
 
 
 describe( "path", ( ) =>
@@ -135,6 +139,36 @@ describe( "path", ( ) =>
 			const path = [ "foo", "a\"b'c/d~e[f]g", "", "bar" ];
 
 			expect( parsePath( { pointerPath } ) ).toStrictEqual( path );
+		} );
+
+		it( "encodeJsonPointerPath empty", ( ) =>
+		{
+			expect( encodeJsonPointerPath( [ ] ) ).toBe( "/" );
+		} );
+
+		it( "encodeJsonPointerPath strings and numbers", ( ) =>
+		{
+			expect( encodeJsonPointerPath( [ "fo/o", 1 ] ) ).toBe( "/fo~1o/1" );
+		} );
+
+		it( "encodeJsonPointerSegment simple string", ( ) =>
+		{
+			expect( encodeJsonPointerSegment( "foo" ) ).toBe( "foo" );
+		} );
+
+		it( "encodeJsonPointerSegment simple string", ( ) =>
+		{
+			expect( encodeJsonPointerSegment( "foo" ) ).toBe( "foo" );
+		} );
+
+		it( "encodeJsonPointerSegment string with /", ( ) =>
+		{
+			expect( encodeJsonPointerSegment( "f/o/o" ) ).toBe( "f~1o~1o" );
+		} );
+
+		it( "encodeJsonPointerSegment number", ( ) =>
+		{
+			expect( encodeJsonPointerSegment( 2 ) ).toBe( "2" );
 		} );
 	} );
 } );
