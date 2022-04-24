@@ -55,7 +55,7 @@ function parseDotPath( path: string ): LocationPath
 	const bail = ( ): never =>
 	{
 		throw new Error( `parsePath(): Invalid dot-path: ${path}` );
-	}
+	};
 
 	const ret: LocationPath = [ ];
 
