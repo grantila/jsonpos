@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.prod.json",
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "cz": "git-cz"
   },
   "repository": {
@@ -54,24 +54,5 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  },
-  "jest": {
-    "resolver": "ts-jest-resolver",
-    "testEnvironment": "node",
-    "testMatch": [
-      "<rootDir>/lib/**/*.test.ts"
-    ],
-    "collectCoverageFrom": [
-      "<rootDir>/lib/**"
-    ],
-    "collectCoverage": true,
-    "coveragePathIgnorePatterns": [
-      "/node_modules/"
-    ],
-    "coverageReporters": [
-      "lcov",
-      "text",
-      "html"
-    ]
   }
 }
