@@ -26,8 +26,8 @@ describe( "index", ( ) =>
 	it( "exports everything", ( ) =>
 	{
 		expect( index ).toMatchObject( {
-			getAstByObject: expect.any( Function ),
-			getAstByString: expect.any( Function ),
+			getParsedByObject: expect.any( Function ),
+			getParsedByString: expect.any( Function ),
 			getLocation: expect.any( Function ),
 			jsonpos: expect.any( Function ),
 		} );

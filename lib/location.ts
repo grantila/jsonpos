@@ -1,7 +1,8 @@
-import type { ValueNode, IdentifierNode } from 'json-to-ast'
+import type { CstNode, CstTokenRange } from 'json-cst'
 
 import type { ParsedJson } from './parse.js'
 import { LocationOptionsPath, parsePath } from './path.js'
+import { getPosition, Position } from './position.js'
 
 
 export type LocationOptions =
@@ -9,13 +10,6 @@ export type LocationOptions =
 	& {
 		markIdentifier?: boolean;
 	};
-
-export interface Position
-{
-	line: number;
-	column: number;
-	offset: number;
-}
 
 export interface Location
 {
@@ -28,10 +22,23 @@ export function getLocation(
 	options: LocationOptions
 ): Location
 {
-	const { jsonAST } = parsedJson;
+	const { jsonDoc, jsonString } = parsedJson;
 	const { markIdentifier = false } = options;
 
-	const path = parsePath( options );
+	const path = parsePath( options ).map( val => `${val}` );
+
+	if ( !jsonDoc )
+	{
+		// Minic null but undefined
+		if ( path.length === 0 )
+			// Found as root value
+			return {
+				start: { offset: 0, line: 1, column: 1 },
+				end: { offset: 9, line: 1, column: 10 },
+			};
+		// Not found
+		throw new Error( `No such path in undefined` );
+	}
 
 	const pathAsString = ( ) => path.join( '.' );
 	const getParentPath = ( index: number ) =>
@@ -39,13 +46,13 @@ export function getLocation(
 	const explainWhere = ( index: number ) =>
 		`${getParentPath( index )} [query: ${pathAsString( )}]`;
 
-	const { loc } = path
-		.reduce( ( node: ValueNode | IdentifierNode, pathItem, index ) =>
-			node.type === 'Object'
+	const foundNode = path
+		.reduce( ( node: CstNode, pathItem, index ) =>
+			node?.kind === 'object'
 			? ( ( ) =>
 				{
 					const child = node.children.find( child =>
-						child.key.value === pathItem
+						child.keyToken.value === pathItem
 					);
 					if ( !child )
 					{
@@ -54,13 +61,12 @@ export function getLocation(
 							`${explainWhere( index )}`
 						);
 					}
-					const { key, value } = child;
+
 					return markIdentifier && index === path.length - 1
-						? key
-						: value;
+						? child
+						: child.valueNode;
 				} )( )
-			// istanbul ignore next
-			: node.type === 'Array'
+			: node?.kind === 'array'
 			? ( ( ) =>
 				{
 					const itemIndex = Number( pathItem );
@@ -81,13 +87,28 @@ export function getLocation(
 							`${explainWhere( index )}`
 						);
 					}
-					node.children
-					return node.children[ Number( pathItem ) ];
+					return node.children[ Number( pathItem ) ]!.valueNode;
 				} )( )
-			: node
-		, jsonAST as ValueNode
+			: ( ( ) =>
+				{
+					throw new Error(
+						`No such property ${pathItem} in ` +
+						`${explainWhere( index )}`
+					);
+				} )( )
+		, jsonDoc.root
 	);
 
-	// istanbul ignore next
-	return { start: loc?.start, end: loc?.end };
+	const range: CstTokenRange =
+		foundNode.kind === 'object-property'
+		? {
+			start: foundNode.keyToken.offset,
+			end: foundNode.keyToken.offset + foundNode.keyToken.raw.length,
+		}
+		: foundNode.range
+
+	return {
+		start: getPosition( jsonString, range.start ),
+		end: getPosition( jsonString, range.end ),
+	};
 }

@@ -1,90 +1,56 @@
-import { getAstByObject, getAstByString } from './parse'
+import { getParsedByObject, getParsedByString } from './parse'
 
 describe( "parse", ( ) =>
 {
-	it( "getAstByObject", ( ) =>
+	it( "getParsedByObject", ( ) =>
 	{
 		const json = { foo: "bar" };
 		expect(
-			getAstByObject( json )
-		).toStrictEqual( {
+			getParsedByObject( json )
+		).toMatchObject( {
 			json,
 			jsonString: '{\n    "foo": "bar"\n}',
-			jsonAST: {
-				type: 'Object',
-				children: expect.anything(),
-				loc: expect.objectContaining( { source: null } ),
-			},
+			jsonDoc: expect.objectContaining( {
+				root: expect.objectContaining( { kind: 'object' } ),
+			} ),
 		} );
 	} );
 
-	it( "getAstByObject", ( ) =>
+	it( "getParsedByObject", ( ) =>
 	{
 		const str = '{\n    "foo": {\n        "bar": "baz"\n    }\n}';
 		expect(
-			getAstByObject( { foo: { bar: "baz" } } )
+			getParsedByObject( { foo: { bar: "baz" } } )
 		).toStrictEqual(
-			getAstByString( str )
+			getParsedByString( str )
 		);
 	} );
 
-	it( "getAstByObject null", ( ) =>
+	it( "getParsedByObject null", ( ) =>
 	{
-		const { json, jsonString, jsonAST } = getAstByObject( null );
+		const { json, jsonString, jsonDoc } = getParsedByObject( null );
 		expect( json ).toBe( null );
 		expect( jsonString ).toBe( 'null' );
-		expect( jsonAST ).toMatchObject( {
-			loc: {
-				end: {
-					column: 5,
-					line: 1,
-					offset: 4,
-				},
-				source: null,
-				start: {
-					column: 1,
-					line: 1,
-					offset: 0,
-				},
-			},
-			raw: 'null',
-			type: 'Literal',
-			value: null,
+		expect( jsonDoc ).toMatchObject( {
+			root: expect.objectContaining( { kind: 'literal' } ),
 		} );
 	} );
 
-	it( "getAstByObject undefined", ( ) =>
+	it( "getParsedByObject undefined", ( ) =>
 	{
-		const { json, jsonString, jsonAST } = getAstByObject( undefined );
+		const { json, jsonString, jsonDoc } = getParsedByObject( undefined );
 		expect( json ).toBe( undefined );
 		expect( jsonString ).toBe( 'undefined' );
-		expect( jsonAST ).toMatchObject( {
-			loc: {
-				end: {
-					column: 10,
-					line: 1,
-					offset: 9,
-				},
-				source: undefined,
-				start: {
-					column: 1,
-					line: 1,
-					offset: 0,
-				},
-			},
-			raw: 'undefined',
-			type: 'Literal',
-			value: undefined,
-		} );
+		expect( jsonDoc ).toBeUndefined( );
 	} );
 
-	it( "getAstByObject with custom indent", ( ) =>
+	it( "getParsedByObject with custom indent", ( ) =>
 	{
 		const str = '{\n  "foo": {\n    "bar": "baz"\n  }\n}';
 		expect(
-			getAstByObject( { foo: { bar: "baz" } }, 2 )
+			getParsedByObject( { foo: { bar: "baz" } }, 2 )
 		).toStrictEqual(
-			getAstByString( str )
+			getParsedByString( str )
 		);
 	} );
 } );

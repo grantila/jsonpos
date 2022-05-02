@@ -45,16 +45,21 @@ If the *property* "bar" is wanted, instead of the *value*, set `markIdentifier` 
    * Array-based `dataPath` is now simply `path`.
      * An empty object represents the root object, like in v2.
    * New slash-based (string) `pointerPath` is allowed, following JSON Pointer encoding.
+ * Since v4:
+   * `json-to-ast` has been replaced with `json-cst` which is a lot smaller.
+   * `getAstByObject` and `getAstByString` was renamed `getParsedByObject` and `getParsedByString`.
+
 
 # Exports
 
 The package exports the following functions:
  * [`jsonpos`](#definition) the main function, getting the location of a value in a JSON document
- * AST helper functions:
-   * [`getAstByObject`](#getastbyobject)
-   * [`getAstByString`](#getastbystring)
+ * CST helper functions:
+   * [`getParsedByObject`](#getparsedbyobject)
+   * [`getParsedByString`](#getparsedbystring)
  * Location helper function:
    * [`getLocation`](#getlocation)
+   * [`getPosition`](#getlocation)
  * Path helper functions:
    * [`parsePath`](#parsepath)
    * [`encodeJsonPointerPath`](#json-pointer-paths)
@@ -142,61 +147,88 @@ const loc = jsonpos(
 
 ## Advanced usage
 
-The `jsonpos` function is a shorthand for `getLocation( getAstByString( json ), options )`
+The `jsonpos` function is a shorthand for `getLocation( getParsedByString( json ), options )`
 
-Extract the AST (using [json-to-ast](https://www.npmjs.com/package/json-to-ast)) with `getAstByString` or `getAstByObject`. The result is an object of type `ParsedJson`:
+Extract the CST (using [json-cst](https://www.npmjs.com/package/json-cst)) with `getParsedByString` or `getParsedByObject`. The result is an object of type `ParsedJson`:
 
 ```ts
 interface ParsedJson
 {
     json: any;
     jsonString: string;
-    jsonAST: ValueNode; // ValueNode is a json-to-ast type
+    jsonDoc: CstDocument; // CstDocument is a json-cst type
 }
 ```
 
-### getAstByString
+### getParsedByString
 
 ```ts
-import { getAstByString } from 'jsonpos'
+import { getParsedByString } from 'jsonpos'
 
-const ast = getAstByString( '{ "foo": "bar" }' );
-const { json, jsonString, jsonAST } = ast;
+const parsed = getParsedByString( '{ "foo": "bar" }' );
+const { json, jsonString, jsonDoc } = parsed;
 ```
 
-### getAstByObject
+### getParsedByObject
 
-`getAstByObject` will stringify the JSON using `JSON.stringify(obj, null, 4)` and use that to parse the AST.
+`getParsedByObject` will stringify the JSON using `JSON.stringify(obj, null, 4)` and use that to parse the CST.
 
 ```ts
-import { getAstByObject } from 'jsonpos'
+import { getParsedByObject } from 'jsonpos'
 
-const ast = getAstByObject( { foo: "bar" } );
-const { json, jsonString, jsonAST } = ast;
+const parsed = getParsedByObject( { foo: "bar" } );
+const { json, jsonString, jsonDoc } = parsed;
 ```
 
-`getAstByObject` takes an optional second argument `indent` which can be set to something else than `4` if necessary, e.g. `2`:
+`getParsedByObject` takes an optional second argument `indent` which can be set to something else than `4` if necessary, e.g. `2`:
 
 ```ts
-const ast = getAstByObject( { foo: "bar" }, 2 );
+const parsed = getParsedByObject( { foo: "bar" }, 2 );
 ```
 
 ### getLocation
 
-The `getLocation` takes an *ast* object as returned by `getAstByString` or `getAstByObject` and returns a `Location` object.
+The `getLocation` takes an *parsed* object as returned by `getParsedByString` or `getParsedByObject` and returns a `Location` object.
 
-#### Definitins
+#### Definitions
 
-`getLocation( ast: ParsedJson, options: LocationOptions ): Location`
+`getLocation( parsed: ParsedJson, options: LocationOptions ): Location`
+
+where `Location` is defined [above](#definition).
 
 #### Example
 
 ```ts
-import { getAstByString, getLocation } from 'jsonpos'
+import { getParsedByString, getLocation } from 'jsonpos'
 
-const ast = getAstByString( '{ "foo": "bar" }' );
-const loc = getLocation( ast, { pointerPath: '/foo' } );
+const parsed = getParsedByString( '{ "foo": "bar" }' );
+const loc = getLocation( parsed, { pointerPath: '/foo' } );
 ```
+
+
+### getPosition
+
+To get the position (line and column) of an offset position, use `getPosition`.
+
+#### Definitions
+
+`getPosition( text: string, pos: number ): Position`
+
+where `Position` is defined [above](#definition).
+
+#### Example
+
+```ts
+import { getPosition } from 'jsonpos'
+
+const text = `{
+  "foo": "bar",
+  "baz": 42
+}`;
+const loc = getPosition( text, 25 ); // 25 is start of <42>
+// loc = { offset: 25, line: 3, column: 10 }
+```
+
 
 ## Path helpers
 

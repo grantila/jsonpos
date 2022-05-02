@@ -1,43 +1,35 @@
-import parse, { type LiteralNode } from 'json-to-ast'
+import { parse, type CstDocument } from 'json-cst'
 
 
 export interface ParsedJson
 {
 	json: any;
 	jsonString: string;
-	jsonAST: unknown;
+	jsonDoc: CstDocument | undefined;
 }
 
-export function getAstByString( jsonString: string, json?: any ): ParsedJson
+export function getParsedByString( jsonString: string, json?: any ): ParsedJson
 {
-	const jsonAST = parse( jsonString, { loc: true } );
+	const jsonDoc = parse( jsonString );
+
 	return {
 		json: json || JSON.parse( jsonString ),
 		jsonString,
-		jsonAST,
+		jsonDoc,
 	};
 }
 
-export function getAstByObject( json: any, indent = 4 ): ParsedJson
+export function getParsedByObject( json: any, indent = 4 ): ParsedJson
 {
 	const jsonString = JSON.stringify( json ?? null, null, indent );
-	const ret = getAstByString( jsonString );
+	const ret = getParsedByString( jsonString );
 
 	// When we get undefined as input, mimic null behavior
 	if ( json === undefined )
 	{
-		const jsonAST = ret.jsonAST as LiteralNode;
-		// istanbul ignore next
-		if ( jsonAST.loc?.end )
-		{
-			jsonAST.loc.end.column += 5;
-			jsonAST.loc.end.offset += 5;
-			jsonAST.loc.source = undefined as any as null;
-		}
-		jsonAST.value = undefined as any as null;
-		jsonAST.raw = 'undefined';
-		ret.jsonString = 'undefined';
 		ret.json = undefined;
+		ret.jsonString = 'undefined';
+		ret.jsonDoc = undefined;
 	}
 
 	return ret;

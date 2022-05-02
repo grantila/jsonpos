@@ -1,5 +1,5 @@
 import type { ParsedJson } from './parse.js'
-import { getAstByObject, getAstByString } from './parse.js'
+import { getParsedByObject, getParsedByString } from './parse.js'
 
 import type {
 	LocationOptionsPath,
@@ -8,29 +8,35 @@ import type {
 import { parsePath } from './path.js'
 
 import type {
-	Position,
 	Location,
 	LocationOptions,
 } from './location.js'
 import { getLocation } from './location.js'
 
+import type {
+	Position,
+} from './position.js'
+import { getPosition } from './position.js'
+
 
 export type { ParsedJson }
-export { getAstByObject, getAstByString }
+export { getParsedByObject, getParsedByString }
 
 export type { LocationOptionsPath, LocationPath }
 export { parsePath }
 
-export type { Position, Location, LocationOptions }
+export type { Location, LocationOptions }
 export { getLocation }
 
+export type { Position }
+export { getPosition }
 
 export function jsonpos( json: string, options: LocationOptions ): Location
 {
 	return getLocation(
 		typeof json === 'string'
-			? getAstByString( json )
-			: getAstByObject( json ),
+			? getParsedByString( json )
+			: getParsedByObject( json ),
 		options
 	);
 }

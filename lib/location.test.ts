@@ -1,6 +1,6 @@
-import { getAstByString } from './parse.js'
+import { getParsedByString, getParsedByObject } from './parse.js'
 import { getLocation } from './location.js'
-import { getAstByObject } from '.';
+
 
 const json = `{
 	"foo": [
@@ -13,7 +13,7 @@ describe( "location", ( ) =>
 {
 	it( "by string, markIdentifier = false", ( ) =>
 	{
-		const parsed = getAstByString( json );
+		const parsed = getParsedByString( json );
 
 		const loc = getLocation(
 			parsed,
@@ -35,7 +35,7 @@ describe( "location", ( ) =>
 
 	it( "by string, markIdentifier {= false by default}", ( ) =>
 	{
-		const parsed = getAstByString( json );
+		const parsed = getParsedByString( json );
 
 		const loc = getLocation(
 			parsed,
@@ -57,7 +57,7 @@ describe( "location", ( ) =>
 
 	it( "by string, markIdentifier = true", ( ) =>
 	{
-		const parsed = getAstByString( json );
+		const parsed = getParsedByString( json );
 
 		const loc = getLocation(
 			parsed,
@@ -79,7 +79,7 @@ describe( "location", ( ) =>
 
 	it( "by string not beginning with '.'", ( ) =>
 	{
-		const parsed = getAstByString( json );
+		const parsed = getParsedByString( json );
 
 		const thrower = ( ) => getLocation(
 			parsed,
@@ -90,7 +90,7 @@ describe( "location", ( ) =>
 
 	it( "by array path, markIdentifier = false", ( ) =>
 	{
-		const parsed = getAstByString( json );
+		const parsed = getParsedByString( json );
 
 		const loc = getLocation(
 			parsed,
@@ -112,7 +112,7 @@ describe( "location", ( ) =>
 
 	it( "by array path, markIdentifier = true", ( ) =>
 	{
-		const parsed = getAstByString( json );
+		const parsed = getParsedByString( json );
 
 		const loc = getLocation(
 			parsed,
@@ -134,7 +134,7 @@ describe( "location", ( ) =>
 
 	it( "by non-existing path (failed by object property)", ( ) =>
 	{
-		const parsed = getAstByString( json );
+		const parsed = getParsedByString( json );
 
 		const thrower = ( ) =>
 			getLocation(
@@ -148,7 +148,7 @@ describe( "location", ( ) =>
 
 	it( "by non-existing path (failed by array index)", ( ) =>
 	{
-		const parsed = getAstByString( json );
+		const parsed = getParsedByString( json );
 
 		const thrower = ( ) =>
 			getLocation(
@@ -162,7 +162,7 @@ describe( "location", ( ) =>
 
 	it( "by non-existing path (failed by non-numeric array index)", ( ) =>
 	{
-		const parsed = getAstByString( json );
+		const parsed = getParsedByString( json );
 
 		const thrower = ( ) =>
 			getLocation(
@@ -179,11 +179,11 @@ describe( "location", ( ) =>
 
 		it( "dot style", ( ) =>
 		{
-			const dotPath = ".foo['baz']['bak']..bam.'bar'['bob'].bee";
+			const dotPath = ".foo['baz']['bak']..bam.'bar'['bob']";
 			const obj =
 				'{"foo":{"baz":{"bak":{"":{"bam":{"bar":{"bob":"bee"}}}}}}}';
 
-			const parsed = getAstByString( obj );
+			const parsed = getParsedByString( obj );
 
 			const loc = getLocation( parsed, { dotPath } );
 
@@ -203,10 +203,10 @@ describe( "location", ( ) =>
 
 		it( "json-pointer style", ( ) =>
 		{
-			const pointerPath = "/foo/a\"b'c~1d~0e[f]g//bar";
-			const obj = { "foo": { "a\"b'c/d~e[f]g": { "": "bar" } } };
+			const pointerPath = "/foo/a\"b'c~1d~0e[f]g/";
+			const obj = { "foo": { "a\"b\'c/d~e[f]g": { "": "bar" } } };
 
-			const parsed = getAstByObject( obj );
+			const parsed = getParsedByObject( obj );
 
 			const loc = getLocation( parsed, { pointerPath } );
 
@@ -223,5 +223,62 @@ describe( "location", ( ) =>
 				},
 			} );
 		} );
+	} );
+
+	it( "not found path", ( ) =>
+	{
+		const dotPath = ".foo.bar";
+		const obj = { "foo": { "bak": 42 } };
+
+		const parsed = getParsedByObject( obj );
+
+		const getLoc = ( ) => getLocation( parsed, { dotPath } );
+
+		expect( getLoc ).toThrowError( /no such property/i );
+	} );
+
+	it( "not found path (traverse inside string)", ( ) =>
+	{
+		const dotPath = ".foo.bar.bak";
+		const obj = { "foo": { "bar": "something" } };
+
+		const parsed = getParsedByObject( obj );
+
+		const getLoc = ( ) => getLocation( parsed, { dotPath } );
+
+		expect( getLoc ).toThrowError( /no such property/i );
+	} );
+
+	it( "doc is undefined", ( ) =>
+	{
+		const pointerPath = '/';
+
+		const parsed = getParsedByObject( undefined );
+
+		const loc = getLocation( parsed, { pointerPath } );
+
+		expect( loc ).toStrictEqual( {
+			start: {
+				column: 1,
+				line: 1,
+				offset: 0,
+			},
+			end: {
+				column: 10,
+				line: 1,
+				offset: 9,
+			},
+		} );
+	} );
+
+	it( "not found in undefined", ( ) =>
+	{
+		const pointerPath = '/foo';
+
+		const parsed = getParsedByObject( undefined );
+
+		const getLoc = ( ) => getLocation( parsed, { pointerPath } );
+
+		expect( getLoc ).toThrowError( /path in undefined/i );
 	} );
 } );
