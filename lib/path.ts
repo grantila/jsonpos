@@ -52,6 +52,9 @@ function parseDotPath( path: string ): LocationPath
 			`${path}`
 		);
 
+	if ( path === '.' )
+		return [ ];
+
 	const bail = ( ): never =>
 	{
 		throw new Error( `parsePath(): Invalid dot-path: ${path}` );
@@ -129,6 +132,9 @@ export function parseJsonPointerPath( path: string ): Array< string >
 		throw new SyntaxError(
 			`parsePath(): Invalid pointer-path, must begin with "/": ${path}`
 		);
+
+	if ( path === '/' )
+		return [ ];
 
 	return path
 		.slice( 1 )

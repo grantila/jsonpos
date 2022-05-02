@@ -37,6 +37,14 @@ describe( "path", ( ) =>
 				.toStrictEqual( [ "foo", "bar" ] );
 		} );
 
+		it( "root", ( ) =>
+		{
+			const dotPath = ".";
+			const path = [ ] as string[ ];
+
+			expect( parsePath( { dotPath } ) ).toStrictEqual( path );
+		} );
+
 		it( "only single-quote", ( ) =>
 		{
 			const dotPath = ".foo.'bar'";
@@ -129,6 +137,14 @@ describe( "path", ( ) =>
 		{
 			const pointerPath = "/foo/bar/";
 			const path = [ "foo", "bar", "" ];
+
+			expect( parsePath( { pointerPath } ) ).toStrictEqual( path );
+		} );
+
+		it( "root", ( ) =>
+		{
+			const pointerPath = "/";
+			const path = [ ] as string[ ];
 
 			expect( parsePath( { pointerPath } ) ).toStrictEqual( path );
 		} );
