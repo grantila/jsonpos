@@ -13,6 +13,7 @@
 		"module": "ES2020",
 		"esModuleInterop": true,
 		"moduleResolution": "node",
+		"noUncheckedIndexedAccess": true,
 		"noImplicitAny": true,
 		"noUnusedLocals": true,
 		"pretty": true,
