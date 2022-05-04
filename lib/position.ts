@@ -34,7 +34,7 @@ export function countCharUntil( text: string, end: number, char: string )
 export function getPosition( text: string, pos: number ): Position
 {
 	// Clamp to text range
-	pos = Math.min( Math.max( pos, 0 ), text.length - 1 );
+	pos = Math.min( Math.max( pos, 0 ), text.length );
 
 	const { count, lastPos } = countCharUntil( text, pos + 1, '\n' );
 

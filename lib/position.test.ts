@@ -130,8 +130,8 @@ describe( "position", ( ) =>
 
 		expect( parsed ).toStrictEqual( {
 			line: 3,
-			column: 3,
-			offset: 9,
+			column: 4,
+			offset: 10,
 		} );
 	} );
 
